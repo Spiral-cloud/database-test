@@ -18,7 +18,7 @@ CREATE TABLE Prescriber_information
     prescriber_type VARCHAR(25),
     practice_name VARCHAR(100),
     practice_address VARCHAR(100),
-    practice_code INT(10),
+    practice_code INT,
     professional_registration_number VARCHAR(20) UNIQUE
 )
 CREATE TABLE Medication_details
@@ -39,6 +39,18 @@ CREATE TABLE Dispensing_information
     date_dispensed DATE,
     date_collected DATE,
     branch VARCHAR(100),
-    dispensing_pharmacist STATUS,
-    charge_status STATUS,
+    dispensing_pharmacist VARCHAR(3) NOT NULL CHECK (dispensing_pharmacist IN ('pending', 'dispensed', 'collected', 'cancelled')),
+    charge_status VARCHAR(3) NOT NULL CHECK (charge_status IN ('paid','exempt')),
 )
+/*CREATE TABLE Prescription_status
+(
+    pending BOOLEAN,
+    dispensed BOOLEAN,
+    collected BOOLEAN,
+    cancelled BOOLEAN,
+)
+CREATE TABLE Medication_form
+(
+    tablet BOOLEAN,
+    capsule BOOLEAN,
+)*/
