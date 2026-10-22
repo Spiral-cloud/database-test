@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS Dispensing_information
     --dispensing_pharmacist VARCHAR(3) NOT NULL CHECK (dispensing_pharmacist IN ('pending', 'dispensed', 'collected', 'cancelled')),
     dispensing_pharmacist enum('pending', 'dispensed', 'collected', 'cancelled') NOT NULL,
     --charge_status VARCHAR(3) NOT NULL CHECK (charge_status IN ('paid','exempt')),
-    charge_status enum('paid','exempt') NOT NULL,
+    charge_status enum('paid','exempt') NOT NULL,#
+    CONSTRAINT fk_Prescription_id UNIQUE (Prescription_id),
 )
 CREATE TABLE IF NOT EXISTS Prescription_status
 (
@@ -98,3 +99,6 @@ CREATE TABLE IF NOT EXISTS Staff_roles
     prescriber BOOLEAN,*/
 )
 INSERT INTO Staff_roles (Prescription_id) VALUES (1, 'pharmacist', 'dispensing_assistant', 'branch_manager', 'head office administrator');
+/*CREATE RULE IF NOT EXISTS Unique_identifier AS ON INSERT TO Prescription_status
+    WHERE EXISTS (SELECT 1 FROM Prescription_status WHERE Prescription_id = NEW.Prescription_id)
+    DO INSTEAD NOTHING;*/
