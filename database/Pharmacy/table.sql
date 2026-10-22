@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS Pharmacy;
 USE Pharmacy;
-CREATE TABLE IF NOT EXISTS Patient_information
+CREATE TABLE IF NOT EXISTS Patient_information COMMENT 'This table stores all of the necessary patient information'
 (
     Patient_id INT PRIMARY KEY NOT NULL UNIQUE,
     first_name VARCHAR(50),
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS Patient_information
     known_allergies VARCHAR(255),
     prescription_charge_exemption_category ENUM('under 16', 'aged 16 to 18 and in full time education', 'aged 60 or over', 'maternity exemption', 'medical exemption', 'prepayment certificate', 'none, charge paid')
 )
-CREATE TABLE IF NOT EXISTS Prescriber_information
+CREATE TABLE IF NOT EXISTS Prescriber_information COMMENT 'This table stores all of the necessary prescriber information'
 (
     Prescriber_id INT PRIMARY KEY NOT NULL UNIQUE,
     prescriber_name VARCHAR(100),
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Prescriber_information
     practice_code INT,
     professional_registration_number VARCHAR(20) UNIQUE
 )
-CREATE TABLE IF NOT EXISTS Medication_details
+CREATE TABLE IF NOT EXISTS Medication_details COMMENT
 (
     medication_name VARCHAR(100) NOT NULL PRIMARY KEY,
     brand_name VARCHAR(100), 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS Medication_details
     number_of_repeats_authorised INT,
     medication_controlled enum('yes', 'no') NOT NULL
 )
-CREATE TABLE IF NOT EXISTS Dispensing_information
+CREATE TABLE IF NOT EXISTS Dispensing_information COMMENT 'This table stores all of the necessary dispensing information as well as assigning foreign keys to relate to other tables'
 (
     Prescription_id INT PRIMARY KEY NOT NULL UNIQUE,
     date_prescribed DATE,
@@ -44,10 +44,13 @@ CREATE TABLE IF NOT EXISTS Dispensing_information
     --dispensing_pharmacist VARCHAR(3) NOT NULL CHECK (dispensing_pharmacist IN ('pending', 'dispensed', 'collected', 'cancelled')),
     dispensing_pharmacist enum('pending', 'dispensed', 'collected', 'cancelled') NOT NULL,
     --charge_status VARCHAR(3) NOT NULL CHECK (charge_status IN ('paid','exempt')),
-    charge_status enum('paid','exempt') NOT NULL,#
+    charge_status enum('paid','exempt') NOT NULL,
+    FOREIGN KEY prescriber_id REFERENCES Prescriber_information(Prescriber_id),
+    FOREIGN KEY patient_id REFERENCES Patient_information(Patient_id),
+    FOREIGN KEY medication_name REFERENCES Medication_details(medication_name),
     CONSTRAINT fk_Prescription_id UNIQUE (Prescription_id),
 )
-CREATE TABLE IF NOT EXISTS Prescription_status
+CREATE TABLE IF NOT EXISTS Prescription_status COMMENT 'this table stores the status of the prescription and is updates the status of the prescription in the dispensing_information table'
 (
     Prescription_id INT PRIMARY KEY NOT NULL UNIQUE,
     /*pending BOOLEAN,
@@ -56,24 +59,23 @@ CREATE TABLE IF NOT EXISTS Prescription_status
     cancelled BOOLEAN,*/
 )
 insert into Prescription_status (Prescription_id) values (1, 'pending', 'dispensed', 'collected', 'cancelled');
-CREATE TABLE IF NOT EXISTS Medication_form
+CREATE TABLE IF NOT EXISTS Medication_form COMMENT 'This table stores the form of the medication'
 (
     Medication_id INT PRIMARY KEY NOT NULL UNIQUE,
     /*tablet BOOLEAN,
     capsule BOOLEAN,*/
 )
 insert into Medication_form (Medication_id) values (1, 'tablet', 'capsule', 'liquid');
-CREATE TABLE IF NOT EXISTS Prescriber_type
+CREATE TABLE IF NOT EXISTS Prescriber_type COMMENT 'This table stores the type of prescriber'
 (
-    Prescriber_id INT PRIMARY KEY NOT NULL UNIQUE,
-    /*GP BOOLEAN,
+    Prescriber_id INT PRIMARY KEY NOT NULL UNIQUE, 
     nurse_prescriber BOOLEAN,
     pharmacist_prescriber BOOLEAN,
     hospital_consultant BOOLEAN,
     dentist BOOLEAN,*/
 )
 INSERT INTO Prescriber_type (Prescriber_id) VALUES (1, 'GP', 'nurse prescriber', 'pharmacist prescriber', 'hospital consultant', 'dentist');
-CREATE TABLE IF NOT EXISTS Prescription_charge_exemption_category
+CREATE TABLE IF NOT EXISTS Prescription_charge_exemption_category COMMENT 'This table stores the prescription charge exemption category of the patient'
 (
     Patient_id INT PRIMARY KEY NOT NULL UNIQUE,
     /*under_16 BOOLEAN,
@@ -85,14 +87,14 @@ CREATE TABLE IF NOT EXISTS Prescription_charge_exemption_category
     none_charge_paid BOOLEAN,*/
 )
 INSERT INTO Prescription_charge_exemption_category (Patient_id) values (1, 'under 16', 'aged 16 to 18 and in full time education', 'aged 60 or over', 'maternity exemption', 'medical exemption', 'prepayment certificate', 'none, charge paid');
-CREATE TABLE IF NOT EXISTS Medication_controlled
+CREATE TABLE IF NOT EXISTS Medication_controlled COMMENT 'This table stores the controlled status of the medication'
 (
     Medication_id INT PRIMARY KEY NOT NULL UNIQUE,
     /*yes BOOLEAN,
     no BOOLEAN,*/
 )
-INSERT INTO Medication_controlled (Medication_id) VALUES (1, 'yes', 'no');
-CREATE TABLE IF NOT EXISTS Staff_roles
+INSERT INTO Medication_controlled (Medication_id) VALUES (1, 'yes', 'no'); 
+CREATE TABLE IF NOT EXISTS Staff_roles COMMENT 'This table stores the roles of the staff members'
 (
     Prescription_id INT PRIMARY KEY NOT NULL UNIQUE,
     /*dispensing_pharmacist BOOLEAN,
