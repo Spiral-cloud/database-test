@@ -12,6 +12,12 @@ GRANT SELECT, INSERT, DELETE, UPDATE ON Pharmacy.dispensing_information TO branc
 GRANT SELECT, INSERT, DELETE, UPDATE ON Pharmacy.* TO head_office_administrator;
 GRANT SELECT ON Pharmacy.prescriber_information TO prescriber;
 GRANT SELECT ON Pharmacy.dispensing_information TO patient;
+CREATE USER IF NOT EXISTS 'pharmacist' IDENTIFIED BY 'pharmacist_password';
+CREATE USER IF NOT EXISTS 'dispensing_assistant' IDENTIFIED BY 'dispensing_assistant_password';
+CREATE USER IF NOT EXISTS 'branch_manager' IDENTIFIED BY 'branch_manager_password';
+CREATE USER IF NOT EXISTS 'head_office_administrator' IDENTIFIED BY 'head_office_administrator_password';
+CREATE USER IF NOT EXISTS 'prescriber' IDENTIFIED BY 'prescriber_password';
+CREATE USER IF NOT EXISTS 'patient' IDENTIFIED BY 'patient_password';
 CREATE TABLE IF NOT EXISTS Patient_information COMMENT 'This table stores all of the necessary patient information'
 (
     Patient_id INT PRIMARY KEY NOT NULL UNIQUE,
@@ -57,15 +63,19 @@ CREATE TABLE IF NOT EXISTS Dispensing_information COMMENT 'This table stores all
     dispensing_pharmacist enum('pending', 'dispensed', 'collected', 'cancelled') NOT NULL,
     --charge_status VARCHAR(3) NOT NULL CHECK (charge_status IN ('paid','exempt')),
     charge_status enum('paid','exempt') NOT NULL,
+    number_of_repeats_remaining INT,
     prescriber_id INT NOT NULL,
     patient_id INT NOT NULL,
     medication_name VARCHAR(100) NOT NULL,
+    number_of_repeats_authorised INT,
+    Foreign KEY (number_of_repeats_authorised) REFERENCES Medication_details(number_of_repeats_authorised),
     FOREIGN KEY (prescriber_id) REFERENCES Prescriber_information(Prescriber_id),
     FOREIGN KEY (patient_id) REFERENCES Patient_information(Patient_id),
     FOREIGN KEY (medication_name) REFERENCES Medication_details(medication_name),
     CONSTRAINT fk_Prescription_id UNIQUE (Prescription_id),
     CONSTRAINT dispensing_after_prescription CHECK ( date_dispensed IS NULL OR date_dispensed >= date_prescribed),
     CONSTRAINT collection_after_dispensing CHECK (date_collected IS NULL OR date_collected >= date_dispensed)
+    CONSTRAINT repeats_not_above_authorised CHECK (number_of_repeats_authorised <= number_of_repeats_remaining)
 );
 CREATE TABLE IF NOT EXISTS Prescription_status COMMENT 'this table stores the status of the prescription and is updates the status of the prescription in the dispensing_information table'
 (
