@@ -127,12 +127,91 @@ CREATE TABLE IF NOT EXISTS Staff_roles COMMENT 'This table stores the roles of t
     /*dispensing_pharmacist BOOLEAN,
     prescriber BOOLEAN,*/
 );
-INSERT INTO Patient_information (Patient_id, first_name, last_name, date_of_birth, NHS_number, address, postcode, telephone_number, known_allergies, prescription_charge_exemption_category) VALUES (1, 'John', 'Doe', '1990-01-01', '1234567890', '123 Main St', 'AB12 3CD', '01234567890', 'Penicillin', 'none, charge paid');
+INSERT INTO Patient_information (Patient_id, first_name, last_name, date_of_birth, NHS_number, address, postcode, telephone_number, known_allergies, prescription_charge_exemption_category) VALUES (
+    1, 'John', 'Doe', '1990-01-01', '1234567890', '123 Main St', 'AB12 3CD', '01234567890', 'Penicillin', 'none, charge paid'
+    2, 'Jane', 'Smith', '1985-05-15', '0987654321', '456 Elm St', 'EF45 6GH', '0987654321', 'None', 'medical exemption'
+    3, 'Alice', 'Johnson', '2000-10-20', '5678901234', '789 Oak St', 'IJ78 9KL', '5678901234', 'Aspirin, Ibuprofen', 'under 16'
+    4, 'Bob', 'Williams', '1975-03-30', '3456789012', '321 Pine St', 'MN12 3OP', '3456789012', 'None', 'aged 60 or over'
+    5, 'Charlie', 'Brown', '1995-07-10', '  2345678901', '654 Cedar St', 'QR45 6ST', '2345678901', 'None', 'prepayment certificate'
+    6, 'David', 'Jones', '1980-12-25', '4567890123', '987 Birch St', 'UV78 9WX', '4567890123', 'None', 'maternity exemption'
+    7, 'Eve', 'Davis', '1998-09-05', '6789012345', '135 Maple St', 'YZ12 3AB', '6789012345', 'None', 'aged 16 to 18 and in full time education'
+    8, 'Frank', 'Miller', '1970-11-15', '8901234567', '246 Spruce St', 'CD45 6EF', '8901234567', 'None', 'medical exemption'
+    9, 'Grace', 'Wilson', '2002-02-28', '0123456789', '357 Willow St', 'GH78 9IJ', '0123456789', 'None', 'none, charge paid'
+    10, 'Hannah', 'Moore', '1992-06-18', '2345678901', '468 Aspen St', 'KL12 3MN', '2345678901', 'None', 'prepayment certificate'
+    11, 'Ian', 'Taylor', '1988-04-12', '3456789012', '579 Poplar St', 'OP45 6QR', '3456789012', 'None', 'aged 60 or over'
+    12, 'Jack', 'Anderson', '1993-08-22', '4567890123', '680 Chestnut St', 'ST78 9UV', '4567890123', 'None', 'under 16'
+    13, 'Kathy', 'Thomas', '1983-01-30', '5678901234', '791 Walnut St', 'WX12 3YZ', '5678901234', 'None', 'maternity exemption'
+    14, 'Leo', 'Jackson', '1996-05-14', '6789012345', '802 Fir St', 'YZ45 6AB', '6789012345', 'None', 'aged 16 to 18 and in full time education'
+    15, 'Mia', 'White', '1987-09-09', '7890123456', '913 Redwood St', 'AB78 9CD', '7890123456', 'None', 'medical exemption'
+    );
 SELECT p.patient_id, p.first_name, p.last_name, p.date_of_birth, p.NHS_number, p.address, p.postcode, p.telephone_number, p.known_allergies, p.prescription_charge_exemption_category
 FROM Patient_information p
 JOIN Dispensing_information d ON p.patient_id = d.patient_id
 JOIN Medication_details m ON d.medication_id = m.medication_id
 WHERE p.known_allergies IS NOT NULL AND p.known_allergies <> 'None'; AND FIND_IN_SET(LOWER(m.medication_name), REPLACE(LOWER(p.known_allergies), ', ', ',')) > 0;
+INSERT INTO Prescriber_information (Prescriber_id, prescriber_name, prescriber_type, practice_name, practice_address, practice_code, professional_registration_number) VALUES (
+    1, 'Dr. Smith', 'GP', 'Smith Medical Practice', '123 Main St', 12345, 'REG123456'
+    2, 'Nurse Johnson', 'nurse prescriber', 'Johnson Health Clinic', '456 Elm St', 67890, 'REG234567'
+    3, 'Pharmacist Brown', 'pharmacist prescriber', 'Brown Pharmacy', '789 Oak St', 54321, 'REG345678'
+    4, 'Dr. Lee', 'hospital consultant', 'Lee Hospital', '321 Pine St', 98765, 'REG456789'
+    5, 'Dr. Patel', 'dentist', 'Patel Dental Clinic', '654 Cedar St', 13579, 'REG567890'
+    );
+INSERT INTO Medication_details (medication_id, medication_name, brand_name, strength, form, quantity, directions_for_use, number_of_repeats_authorised, medication_controlled) VALUES (
+    1, 'Amoxicillin', 'Amoxil', '500mg', 'capsule', 30, 'Take one capsule three times a day for 7 days', 0, 'no'
+    2, 'Ibuprofen', 'Nurofen', '200mg', 'tablet', 20, 'Take one tablet every 6 hours as needed for pain', 0, 'no'
+    3, 'Paracetamol', 'Panadol', '500mg', 'tablet', 16, 'Take one tablet every 4-6 hours as needed for pain or fever', 0, 'no'
+    4, 'Salbutamol Inhaler', 'Ventolin', NULL, 'liquid', 1, 'Inhale two puffs every 4-6 hours as needed for wheezing or shortness of breath', 0, 'no'
+    5, 'Metformin', NULL, '500mg', 'tablet', 60, 'Take one tablet twice a day with meals for type 2 diabetes management', 0, 'no'
+    6, 'Lisinopril', NULL, '10mg', 'tablet', 30, 'Take one tablet once daily for high blood pressure management', 0, 'no'
+    7, 'Omeprazole', NULL, '20mg', 'capsule', 28, 'Take one capsule once daily before breakfast for acid reflux management', 0, 'no'
+    8, 'Atorvastatin', NULL, '20mg', 'tablet',  30, 'Take one tablet once daily for cholesterol management', 0, 'no'
+    9, 'Warfarin', NULL, '5mg', 'tablet', 28, 'Take one tablet once daily for blood clot prevention', 0, 'yes'
+    10, 'Prednisolone', NULL, '5mg', 'tablet', 21, 'Take one tablet once daily for inflammation management', 0, 'no'
+    11, 'Citalopram', NULL, '20mg', 'tablet',   30, 'Take one tablet once daily for depression management', 0, 'no'
+    12, 'Levothyroxine', NULL, '50mcg', 'tablet', 30, 'Take one tablet once daily for hypothyroidism management', 0, 'no'
+    13, 'Furosemide', NULL, '40mg', 'tablet', 30, 'Take one tablet once daily for fluid retention management', 0, 'no'
+    14, 'Clopidogrel', NULL, '75mg', 'tablet', 30, 'Take one tablet once daily for blood clot prevention', 0, 'no'
+    15, 'Amlodipine', NULL, '5mg', 'tablet', 30, 'Take one tablet once daily for high blood pressure management', 0, 'no'
+    16, 'Doxycycline', NULL, '100mg', 'capsule', 28, 'Take one capsule twice daily for 7 days for bacterial infection treatment', 0, 'no'
+    17, 'Azithromycin', NULL, '250mg', 'tablet', 6, 'Take one tablet once daily for 3 days for bacterial infection treatment', 0, 'no'
+    18, 'Cefalexin', NULL, '500mg', 'capsule', 28, 'Take one capsule every 6 hours for 7 days for bacterial infection treatment', 0, 'no'
+    19, 'Clarithromycin', NULL, '500mg', 'tablet', 14, 'Take one tablet every 12 hours for 7 days for bacterial infection treatment', 0, 'no'
+    20, 'Fluoxetine', NULL, '20mg', 'capsule', 30, 'Take one capsule once daily for depression management', 0, 'no'
+    );
+    INSERT INTO
+    INSERT INTO Dispensing_information (Prescription_id, date_prescribed, date_dispensed, date_collected, branch, dispensing_pharmacist, charge_status, number_of_repeats_remaining, prescriber_id, patient_id, medication_name, number_of_repeats_authorised) VALUES 
+    (
+        1, '2023-01-01', '2023-01-02', '2023-01-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Amoxicillin', 0
+        2, '2023-02-01', '2023-02-02', '2023-02-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Azithromycin', 0
+        3, '2023-03-01', '2023-03-02', '2023-03-03', 'Market Branch', 'dispensed', 'paid', 0, 1, 1, 'Cefalexin', 0
+        4, '2023-04-01', '2023-04-02', '2023-04-03', 'West End Branch', 'dispensed', 'paid', 0, 1, 1, 'Clarithromycin', 0
+        5, '2023-05-01', '2023-05-02', '2023-05-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Doxycycline', 0
+        6, '2023-06-01', '2023-06-02', '2023-06-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Fluoxetine', 0
+        7, '2023-07-01', '2023-07-02', '2023-07-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Ibuprofen', 0
+        8, '2023-08-01', '2023-08-02', '2023-08-03', 'Market Branch', 'dispensed', 'paid', 0, 1, 1, 'Levothyroxine', 0
+        9, '2023-09-01', '2023-09-02    ', '2023-09-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Lisinopril', 0
+        10, '2023-10-01', '2023-10-02', '2023-10-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Metformin', 0
+        11, '2023-11-01', '2023-11-02', '2023-11-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Omeprazole', 0
+        12, '2023-12-01', '2023-12-02', '2023-12-03', 'West End Branch', 'dispensed', 'paid', 0, 1, 1, 'Paracetamol', 0
+        13, '2024-01-01', '2024-01-02', '2024-01-03', 'Market Branch', 'dispensed', 'paid', 0, 1, 1, 'Prednisolone', 0
+        14, '2024-02-01', '2024-02-02', '2024-02-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Salbutamol Inhaler', 0
+        15, '2024-03-01', '2024-03-02', '2024-03-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Warfarin', 0
+        16, '2024-04-01', '2024-04-02', '2024-04-03', 'West End Branch', 'dispensed', 'paid', 0, 1, 1, 'Amlodipine', 0
+        17, '2024-05-01', '2024-05-02', '2024-05-03', 'Market Branch', 'dispensed', 'paid', 0, 1, 1, 'Clopidogrel', 0
+        18, '2024-06-01', '2024-06-02', '2024-06-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Furosemide', 0
+        19, '2024-07-01', '2024-07-02', '2024-07-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Citalopram', 0
+        20, '2024-08-01', '2024-08-02', '2024-08-03', 'West End Branch', 'dispensed', 'paid', 0, 1, 1, 'Atorvastatin', 0
+        21, '2024-09-01', '2024-09-02', '2024-09-03', 'Market Branch', 'dispensed', 'paid', 0, 1, 1, 'Doxycycline', 0
+        22, '2024-10-01', '2024-10-02', '2024-10-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Azithromycin', 0
+        23, '2024-11-01', '2024-11-02', '2024-11-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Cefalexin', 0
+        24, '2024-12-01', '2024-12-02', '2024-12-03', 'West End Branch', 'dispensed', 'paid', 0, 1, 1, 'Clarithromycin', 0
+        25, '2025-01-01', '2025-01-02', '2025-01-03', 'Market Branch', 'dispensed', 'paid', 0, 1, 1, 'Doxycycline', 0
+        26, '2025-02-01', '2025-02-02', '2025-02-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Fluoxetine', 0
+        27, '2025-03-01', '2025-03-02', '2025-03-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Ibuprofen', 0
+        28, '2025-04-01', '2025-04-02', '2025-04-03', 'Market Branch', 'dispensed', 'paid', 0, 1, 1, 'Levothyroxine', 0
+        29, '2025-05-01', '2025-05-02', '2025-05-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Lisinopril', 0
+        30, '2025-06-01', '2025-06-02', '2025-06-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Metformin', 0
+    );
 INSERT INTO Staff_roles (Prescription_id) VALUES (1, 'pharmacist', 'dispensing_assistant', 'branch_manager', 'head office administrator');
 /*CREATE RULE IF NOT EXISTS Unique_identifier AS ON INSERT TO Prescription_status
     WHERE EXISTS (SELECT 1 FROM Prescription_status WHERE Prescription_id = NEW.Prescription_id)
