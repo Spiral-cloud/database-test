@@ -55,11 +55,11 @@ CREATE TABLE IF NOT EXISTS Dispensing_information COMMENT 'This table stores all
     number_of_repeats_remaining INT,
     prescriber_id INT NOT NULL,
     patient_id INT NOT NULL,
-    medication_name VARCHAR(100) NOT NULL,
+    medication_id INT NOT NULL,
     number_of_repeats_authorised INT NOT NULL DEFAULT 0,
     FOREIGN KEY (prescriber_id) REFERENCES Prescriber_information(Prescriber_id),
     FOREIGN KEY (patient_id) REFERENCES Patient_information(Patient_id),
-    FOREIGN KEY (medication_name) REFERENCES Medication_details(medication_name),
+    FOREIGN KEY (medication_id) REFERENCES Medication_details(medication_id),
     CONSTRAINT fk_Prescription_id UNIQUE (Prescription_id),
     CONSTRAINT dispensing_after_prescription CHECK ( date_dispensed IS NULL OR date_dispensed >= date_prescribed),
     CONSTRAINT collection_after_dispensing CHECK (date_collected IS NULL OR date_collected >= date_dispensed)
@@ -150,11 +150,11 @@ JOIN Dispensing_information d ON p.patient_id = d.patient_id
 JOIN Medication_details m ON d.medication_id = m.medication_id
 WHERE p.known_allergies IS NOT NULL AND p.known_allergies <> 'None'; AND FIND_IN_SET(LOWER(m.medication_name), REPLACE(LOWER(p.known_allergies), ', ', ',')) > 0;
 INSERT INTO Prescriber_information (Prescriber_id, prescriber_name, prescriber_type, practice_name, practice_address, practice_code, professional_registration_number) VALUES (
-    1, 'Dr. Smith', 'GP', 'Smith Medical Practice', '123 Main St', 12345, 'REG123456'
-    2, 'Nurse Johnson', 'nurse prescriber', 'Johnson Health Clinic', '456 Elm St', 67890, 'REG234567'
-    3, 'Pharmacist Brown', 'pharmacist prescriber', 'Brown Pharmacy', '789 Oak St', 54321, 'REG345678'
-    4, 'Dr. Lee', 'hospital consultant', 'Lee Hospital', '321 Pine St', 98765, 'REG456789'
-    5, 'Dr. Patel', 'dentist', 'Patel Dental Clinic', '654 Cedar St', 13579, 'REG567890'
+    1, 'Dr. Smith', 'GP', 'Smith Medical Practice', 'Main Branch', 12345, 'REG123456'
+    2, 'Nurse Johnson', 'nurse prescriber', 'Market Branch', '456 Elm St', 67890, 'REG234567'
+    3, 'Pharmacist Brown', 'pharmacist prescriber', 'Main Branch', '789 Oak St', 54321, 'REG345678'
+    4, 'Dr. Lee', 'hospital consultant', 'Lee Hospital', 'High Street Branch', 98765, 'REG456789'
+    5, 'Dr. Patel', 'dentist', 'Patel Dental Clinic', 'Main Branch', 13579, 'REG567890'
     );
 INSERT INTO Medication_details (medication_id, medication_name, brand_name, strength, form, quantity, directions_for_use, number_of_repeats_authorised, medication_controlled) VALUES (
     1, 'Amoxicillin', 'Amoxil', '500mg', 'capsule', 30, 'Take one capsule three times a day for 7 days', 0, 'no'
@@ -252,3 +252,54 @@ GRANT branch_manager TO 'branch_manager';
 GRANT head_office_administrator TO 'head_office_administrator';
 GRANT prescriber TO 'prescriber' && 'prescriber_2' && 'prescriber_3' && 'prescriber_4' && 'prescriber_5';
 GRANT patient TO 'patient' && 'patient_2' && 'patient_3' && 'patient_4' && 'patient_5';
+
+INSERT INTO Dispensing_information
+(
+    Prescription_id, date_prescribed, date_dispensed, date_collected, branch, dispensing_pharmacist, charge_status, number_of_repeats_remaining, prescriber_id, patient_id, medication_id, number_of_repeats_authorised
+)
+VALUES
+(
+    1, '2023-01-01', '2023-01-02', '2023-01-03', 'Main Branch', 'pending', 'paid', 0, 1, 1, 1, 0  
+);
+INSERT INTO PRESCRIPTION_STATUS
+(
+    Prescription_id, status
+);
+VALUES
+(
+    1, 'dispensed'
+);
+SELECT 
+(
+    d.Prescription_id, d.date_prescribed, d.date_dispensed, d.date_collected, d.branch, d.dispensing_pharmacist, d.charge_status, d.number_of_repeats_remaining, d.prescriber_id, d.patient_id, d.medication_id, d.number_of_repeats_authorised
+
+) FROM Dispensing_information
+SELECT COUNT(d.Prescription_id) AS total_prescriptions_dispensed,
+FROM Dispensing_information d
+JOIN Prescription_status p ON d.patient_id = p.Patient_id
+WHERE p.prescription_charge_exemption_category = 'aged 60 or over' AND d.dispensing_pharmacist = 'dispensed';
+SELECT
+(
+    m.Medication_name
+)FROM Medication_details m
+Where m.Medication_name LIKE 'M%'
+SELECT
+(
+    COUNT(d.Prescription_id,) AS total_prescriptions_dispensed,
+    d.dispensing_pharmacist,
+    d.branch,
+) FROM dispensing_information d
+WHERE d.date_dispensed BETWEEN '2023-01-01' AND '2023-06-01' AND dispensing_pharmacist = 'dispensed'
+GROUP BY d.branch, dispensing_pharmacist
+ORDER BY d.branch ASC, dispensing_pharmacist DESC;
+SELECT
+(
+    d.Prescription_id, d.date_prescribed, d.date_dispensed, d.date_collected, d.branch, d.dispensing_pharmacist, d.charge_status, d.number_of_repeats_remaining, d.prescriber_id, d.patient_id, d.medication_id, d.number_of_repeats_authorised,
+    p.Patient_id, p.first_name, p.last_name, p.date_of_birth,
+    m.medicaton_id, m.medication_name, m.brand_name, m.strength, m.form, m.quantity, m.directions_for_use, m.medication_controlled,
+    pr.prescriber_id, pr.prescriber_name, pr.prescriber_type, pr.practice_name, pr.practice_address, pr.practice_code, pr.professional_registration_number
+) FROM Dispensing_information d
+JOIN Patient_information p ON d.patient_id = p.Patient_id
+JOIN Medication_details m ON d.medication_id = m.medication_id
+JOIN Prescriber_information pr ON d.prescriber_id = pr.Prescriber_id
+WHERE d.prescription_id = 1;
