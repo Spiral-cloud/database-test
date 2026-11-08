@@ -211,7 +211,7 @@ SELECT
 ) FROM Dispensing_information
 SELECT COUNT(d.Prescription_id) AS total_prescriptions_dispensed,
 FROM Dispensing_information d
-JOIN Prescription_status p ON d.Patient_id = p.Patient_id
+JOIN Patient_information p ON d.Patient_id = p.Patient_id
 WHERE p.prescription_charge_exemption_category = 'aged 60 or over' AND d.dispensing_pharmacist = 'dispensed';
 COMMENT 'Checks how many patients have the exemption for being aged 60 or over.'
 SELECT
