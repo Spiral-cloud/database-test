@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS Medication_details COMMENT 'This table stores all of 
     medication_name VARCHAR(100) NOT NULL,
     brand_name VARCHAR(100), 
     strength VARCHAR(50),
-    form enum('tablet', 'capsule', 'liquid') NOT NULL,
+    form enum('tablet', 'capsule', 'liquid','cream','inhaler','injection','patch','drops') NOT NULL,
     quantity INT,
     directions_for_use VARCHAR(255),
     number_of_repeats_authorised INT,
@@ -79,12 +79,12 @@ INSERT INTO Prescription_status (Prescription_id) values (1, 'pending', 'dispens
 CREATE TABLE IF NOT EXISTS Medication_form COMMENT 'This table stores the form of the medication'
 (
     Medication_id INT PRIMARY KEY NOT NULL UNIQUE,
-    Medication_form enum('tablet', 'capsule', 'liquid') NOT NULL,
+    Medication_form enum('tablet', 'capsule', 'liquid', 'cream','inhaler', 'injection', 'patch', 'drops' ) NOT NULL,
     FOREIGN KEY (Medication_id) REFERENCES Medication_details(medication_name)
     /*tablet BOOLEAN,
     capsule BOOLEAN,*/
 );
-INSERT INTO Medication_form (Medication_id) values (1, 'tablet', 'capsule', 'liquid');
+INSERT INTO Medication_form (Medication_id) values (1, 'tablet', 'capsule', 'liquid', 'cream', 'inhaler', 'injection', 'patch', 'drops');
 CREATE TABLE IF NOT EXISTS Prescriber_type COMMENT 'This table stores the type of prescriber'
 (
     Prescriber_id INT PRIMARY KEY NOT NULL UNIQUE, 
