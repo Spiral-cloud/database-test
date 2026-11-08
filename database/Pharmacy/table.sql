@@ -1,6 +1,6 @@
 CREATE DATABASE IF NOT EXISTS Pharmacy;
 USE Pharmacy;
-CREATE ROLE IF NOT EXISTS pharmacist;
+CREATE ROLE IF NOT EXISTS pharmacist; COMMENT 'Roles for all users are created at the start of the table. The rest is done later so that permissions can be given to these roles'
 CREATE ROLE IF NOT EXISTS dispensing_assistant;
 CREATE ROLE IF NOT EXISTS branch_manager;
 CREATE ROLE IF NOT EXISTS head_office_administrator;
@@ -127,6 +127,7 @@ CREATE TABLE IF NOT EXISTS Staff_roles COMMENT 'This table stores the roles of t
     /*dispensing_pharmacist BOOLEAN,
     prescriber BOOLEAN,*/
 );
+COMMENT 'The insert statement below creates 15 patients with details to fill all the columns'
 INSERT INTO Patient_information (Patient_id, first_name, last_name, date_of_birth, NHS_number, address, postcode, telephone_number, known_allergies, prescription_charge_exemption_category) VALUES (
     1, 'John', 'Doe', '1990-01-01', '1234567890', '123 Main St', 'AB12 3CD', '01234567890', 'Penicillin', 'none, charge paid'
     2, 'Jane', 'Smith', '1985-05-15', '0987654321', '456 Elm St', 'EF45 6GH', '0987654321', 'None', 'medical exemption'
@@ -148,7 +149,7 @@ SELECT p.patient_id, p.first_name, p.last_name, p.date_of_birth, p.NHS_number, p
 FROM Patient_information p
 JOIN Dispensing_information d ON p.patient_id = d.patient_id
 JOIN Medication_details m ON d.medication_id = m.medication_id
-WHERE p.known_allergies IS NOT NULL AND p.known_allergies <> 'None'; AND FIND_IN_SET(LOWER(m.medication_name), REPLACE(LOWER(p.known_allergies), ', ', ',')) > 0;
+WHERE p.known_allergies IS NOT NULL AND p.known_allergies <> 'None'; AND FIND_IN_SET(LOWER(m.medication_name), REPLACE(LOWER(p.known_allergies), ', ', ',')) > 0; COMMENT'This query checks if the user has any allergies and checks that the prescribed medication is in the list of allergies.'
 INSERT INTO Prescriber_information (Prescriber_id, prescriber_name, prescriber_type, practice_name, practice_address, practice_code, professional_registration_number) VALUES (
     1, 'Dr. Smith', 'GP', 'Smith Medical Practice', 'Main Branch', 12345, 'REG123456'
     2, 'Nurse Johnson', 'nurse prescriber', 'Market Branch', '456 Elm St', 67890, 'REG234567'
@@ -156,6 +157,7 @@ INSERT INTO Prescriber_information (Prescriber_id, prescriber_name, prescriber_t
     4, 'Dr. Lee', 'hospital consultant', 'Lee Hospital', 'High Street Branch', 98765, 'REG456789'
     5, 'Dr. Patel', 'dentist', 'Patel Dental Clinic', 'Main Branch', 13579, 'REG567890'
     );
+    COMMENT 'Creates five prescribers all with different information which helps to test that the database is capable of taking regular input'
 INSERT INTO Medication_details (medication_id, medication_name, brand_name, strength, form, quantity, directions_for_use, number_of_repeats_authorised, medication_controlled) VALUES (
     1, 'Amoxicillin', 'Amoxil', '500mg', 'capsule', 30, 'Take one capsule three times a day for 7 days', 0, 'no'
     2, 'Ibuprofen', 'Nurofen', '200mg', 'tablet', 20, 'Take one tablet every 6 hours as needed for pain', 0, 'no'
@@ -178,6 +180,7 @@ INSERT INTO Medication_details (medication_id, medication_name, brand_name, stre
     19, 'Clarithromycin', NULL, '500mg', 'tablet', 14, 'Take one tablet every 12 hours for 7 days for bacterial infection treatment', 0, 'no'
     20, 'Fluoxetine', NULL, '20mg', 'capsule', 30, 'Take one capsule once daily for depression management', 0, 'no'
     );
+    COMMENT 'Creates 20 medications with different information which helps to test that the database is capable of taking regular input'
     INSERT INTO
     INSERT INTO Dispensing_information (Prescription_id, date_prescribed, date_dispensed, date_collected, branch, dispensing_pharmacist, charge_status, number_of_repeats_remaining, prescriber_id, patient_id, medication_name, number_of_repeats_authorised) VALUES 
     (
@@ -212,51 +215,37 @@ INSERT INTO Medication_details (medication_id, medication_name, brand_name, stre
         29, '2025-05-01', '2025-05-02', '2025-05-03', 'High Street Branch', 'dispensed', 'paid', 0, 1, 1, 'Lisinopril', 0
         30, '2025-06-01', '2025-06-02', '2025-06-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 'Metformin', 0
     );
-INSERT INTO Staff_roles (Prescription_id) VALUES (1, 'pharmacist', 'dispensing_assistant', 'branch_manager', 'head office administrator');
+    COMMENT 'Creates 30 prescriptions with different information which helps to test that the database is capable of taking regular input, three branches are also created here which are used throughout the database.'
+INSERT INTO Staff_roles (Prescription_id) VALUES (1, 'pharmacist', 'dispensing_assistant', 'branch_manager', 'head office administrator'); COMMENT 'Inserts the roles into the Staff_roles table.'
 /*CREATE RULE IF NOT EXISTS Unique_identifier AS ON INSERT TO Prescription_status
     WHERE EXISTS (SELECT 1 FROM Prescription_status WHERE Prescription_id = NEW.Prescription_id)
     DO INSTEAD NOTHING;*/
-GRANT SELECT, INSERT, UPDATE ON Pharmacy.Dispensing_information TO pharmacist;
+GRANT SELECT, INSERT, UPDATE ON Pharmacy.Dispensing_information TO pharmacist; COMMENT 'Pharmacists are granted full permission within the dispensing_information table to manage the database as they need all of this information to do their job.'
 GRANT SELECT ON Pharmacy.Dispensing_information TO dispensing_assistant;
 GRANT SELECT, INSERT, DELETE, UPDATE ON Pharmacy.Dispensing_information TO branch_manager;
 GRANT SELECT, INSERT, DELETE, UPDATE ON Pharmacy.* TO head_office_administrator;
-GRANT SELECT ON Pharmacy.Prescriber_information TO prescriber;
-GRANT SELECT ON Pharmacy.Dispensing_information TO patient;
+GRANT SELECT UPDATE ON Pharmacy.Prescriber_information TO prescriber; COMMENT 'Prescribers are granted permission to view and update their own information within the prescriber_information table.'
+GRANT SELECT ON Pharmacy.Dispensing_information TO patient; COMMENT 'Patients are capable of viewing their own prescriptions and if they have been dispensed.'
 CREATE USER IF NOT EXISTS 'pharmacist' IDENTIFIED BY 'pharmacist_password';
 CREATE USER IF NOT EXISTS 'dispensing_assistant' IDENTIFIED BY 'dispensing_assistant_password';
 CREATE USER IF NOT EXISTS 'branch_manager' IDENTIFIED BY 'branch_manager_password';
 CREATE USER IF NOT EXISTS 'head_office_administrator' IDENTIFIED BY 'head_office_administrator_password';
 CREATE USER IF NOT EXISTS 'prescriber' IDENTIFIED BY 'prescriber_password';
-CREATE USER IF NOT EXISTS 'prescriber_2' IDENTIFIED BY 'prescriber_password2';
-CREATE USER IF NOT EXISTS 'prescriber_3' IDENTIFIED BY 'prescriber_password3';
-CREATE USER IF NOT EXISTS 'prescriber_4' IDENTIFIED BY 'prescriber_password4';
-CREATE USER IF NOT EXISTS 'prescriber_5' IDENTIFIED BY 'prescriber_password2';
 CREATE USER IF NOT EXISTS 'patient' IDENTIFIED BY 'patient_password';
-CREATE USER IF NOT EXISTS 'patient_2' IDENTIFIED BY 'patient_password2';
-CREATE USER IF NOT EXISTS 'patient_3' IDENTIFIED BY 'patient_password3';
-CREATE USER IF NOT EXISTS 'patient_4' IDENTIFIED BY 'patient_password4';
-CREATE USER IF NOT EXISTS 'patient_5' IDENTIFIED BY 'patient_password5';
-CREATE USER IF NOT EXISTS 'patient_6' IDENTIFIED BY 'patient_password6';
-CREATE USER IF NOT EXISTS 'patient_7' IDENTIFIED BY 'patient_password7';
-CREATE USER IF NOT EXISTS 'patient_8' IDENTIFIED BY 'patient_password8';
-CREATE USER IF NOT EXISTS 'patient_9' IDENTIFIED BY 'patient_password9';
-CREATE USER IF NOT EXISTS 'patient_10' IDENTIFIED BY 'patient_password10';
-CREATE USER IF NOT EXISTS 'patient_11' IDENTIFIED BY 'patient_password11';
-CREATE USER IF NOT EXISTS 'patient_12' IDENTIFIED BY 'patient_password12';
-CREATE USER IF NOT EXISTS 'patient_13' IDENTIFIED BY 'patient_password13';
-CREATE USER IF NOT EXISTS 'patient_14' IDENTIFIED BY 'patient_password14';
-CREATE USER IF NOT EXISTS 'patient_15' IDENTIFIED BY 'patient_password15';
+COMMENT 'The users are created here and granted permissions to their tables,'
 GRANT pharmacist TO 'pharmacist';
 GRANT dispensing_assistant TO 'dispensing_assistant';
 GRANT branch_manager TO 'branch_manager';
 GRANT head_office_administrator TO 'head_office_administrator';
-GRANT prescriber TO 'prescriber' && 'prescriber_2' && 'prescriber_3' && 'prescriber_4' && 'prescriber_5';
-GRANT patient TO 'patient' && 'patient_2' && 'patient_3' && 'patient_4' && 'patient_5';
+GRANT prescriber TO 'prescriber';
+GRANT patient TO 'patient';
+COMMENT 'Users are granted their roles here and are able to access the database.'
 
 INSERT INTO Dispensing_information
 (
     Prescription_id, date_prescribed, date_dispensed, date_collected, branch, dispensing_pharmacist, charge_status, number_of_repeats_remaining, prescriber_id, patient_id, medication_id, number_of_repeats_authorised
-)
+);
+COMMENT 'this insert statement inserts the values below into the Dispensing_information table.'
 VALUES
 (
     1, '2023-01-01', '2023-01-02', '2023-01-03', 'Main Branch', 'pending', 'paid', 0, 1, 1, 1, 0  
@@ -276,8 +265,9 @@ SELECT
 ) FROM Dispensing_information
 SELECT COUNT(d.Prescription_id) AS total_prescriptions_dispensed,
 FROM Dispensing_information d
-JOIN Prescription_status p ON d.patient_id = p.Patient_id
+JOIN Prescription_status p ON d.Patient_id = p.Patient_id
 WHERE p.prescription_charge_exemption_category = 'aged 60 or over' AND d.dispensing_pharmacist = 'dispensed';
+COMMENT 'Checks how many patients have the exemption for being aged 60 or over.'
 SELECT
 (
     m.Medication_name
@@ -292,6 +282,7 @@ SELECT
 WHERE d.date_dispensed BETWEEN '2023-01-01' AND '2023-06-01' AND dispensing_pharmacist = 'dispensed'
 GROUP BY d.branch, dispensing_pharmacist
 ORDER BY d.branch ASC, dispensing_pharmacist DESC;
+COMMENT 'These queries count the total number of prescriptions within a six month period that have been dispensed.'
 SELECT
 (
     d.Prescription_id, d.date_prescribed, d.date_dispensed, d.date_collected, d.branch, d.dispensing_pharmacist, d.charge_status, d.number_of_repeats_remaining, d.prescriber_id, d.patient_id, d.medication_id, d.number_of_repeats_authorised,
@@ -300,6 +291,7 @@ SELECT
     pr.prescriber_id, pr.prescriber_name, pr.prescriber_type, pr.practice_name, pr.practice_address, pr.practice_code, pr.professional_registration_number
 ) FROM Dispensing_information d
 JOIN Patient_information p ON d.patient_id = p.Patient_id
-JOIN Medication_details m ON d.medication_id = m.medication_id
+JOIN Medication_details m ON d.Medication_id = m.Medication_id
 JOIN Prescriber_information pr ON d.prescriber_id = pr.Prescriber_id
 WHERE d.prescription_id = 1;
+COMMENT 'These queries join all the tables for testing purposes.'
