@@ -198,14 +198,6 @@ VALUES
 (
     32, '2023-01-01', '2023-01-02', '2023-01-03', 'Main Branch', 'pending', 'paid', 0, 1, 1, 1, 0  
 );
-INSERT INTO Dispensing_information
-(
-    Prescription_id, dispensing_pharmacist
-)
-VALUES
-(
-    31, 'dispensed'
-);
 SELECT 
 
     d.Prescription_id, d.date_prescribed, d.date_dispensed, d.date_collected, d.branch, d.dispensing_pharmacist, d.charge_status, d.number_of_repeats_remaining, d.prescriber_id, d.patient_id, d.medication_id, d.number_of_repeats_authorised
