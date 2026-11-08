@@ -65,60 +65,6 @@ CREATE TABLE IF NOT EXISTS Dispensing_information COMMENT 'This table stores all
     CONSTRAINT collection_after_dispensing CHECK (date_collected IS NULL OR date_collected >= date_dispensed)
     CONSTRAINT repeats_not_above_authorised CHECK (number_of_repeats_authorised <= number_of_repeats_remaining)
 );
-CREATE TABLE IF NOT EXISTS Prescription_status COMMENT 'this table stores the status of the prescription and is updates the status of the prescription in the dispensing_information table'
-(
-    Prescription_id INT PRIMARY KEY NOT NULL UNIQUE,
-    status enum('pending', 'dispensed', 'collected', 'cancelled') NOT NULL,
-    FOREIGN KEY (Prescription_id) REFERENCES Dispensing_information(Prescription_id)
-    /*pending BOOLEAN,
-    dispensed BOOLEAN,
-    collected BOOLEAN,
-    cancelled BOOLEAN,*/
-);
-INSERT INTO Prescription_status (Prescription_id) values (1, 'pending', 'dispensed', 'collected', 'cancelled');
-CREATE TABLE IF NOT EXISTS Medication_form COMMENT 'This table stores the form of the medication'
-(
-    Medication_id INT PRIMARY KEY NOT NULL UNIQUE,
-    Medication_form enum('tablet', 'capsule', 'liquid', 'cream','inhaler', 'injection', 'patch', 'drops' ) NOT NULL,
-    FOREIGN KEY (Medication_id) REFERENCES Medication_details(medication_name)
-    /*tablet BOOLEAN,
-    capsule BOOLEAN,*/
-);
-INSERT INTO Medication_form (Medication_id) values (1, 'tablet', 'capsule', 'liquid', 'cream', 'inhaler', 'injection', 'patch', 'drops');
-CREATE TABLE IF NOT EXISTS Prescriber_type COMMENT 'This table stores the type of prescriber'
-(
-    Prescriber_id INT PRIMARY KEY NOT NULL UNIQUE, 
-    Prescriber_type enum('GP', 'nurse prescriber', 'pharmacist prescriber', 'hospital consultant', 'dentist') NOT NULL,
-    FOREIGN KEY (Prescriber_id) REFERENCES Prescriber_information(Prescriber_id)
-   /* nurse_prescriber BOOLEAN,
-    pharmacist_prescriber BOOLEAN,
-    hospital_consultant BOOLEAN,
-    dentist BOOLEAN,*/
-);
-INSERT INTO Prescriber_type (Prescriber_id) VALUES (1, 'GP', 'nurse prescriber', 'pharmacist prescriber', 'hospital consultant', 'dentist');
-CREATE TABLE IF NOT EXISTS Prescription_charge_exemption_category COMMENT 'This table stores the prescription charge exemption category of the patient'
-(
-    Patient_id INT PRIMARY KEY NOT NULL UNIQUE,
-    Prescription_charge_exemption_category enum('under 16', 'aged 16 to 18 and in full time education', 'aged 60 or over', 'maternity exemption', 'medical exemption', 'prepayment certificate', 'none, charge paid') NOT NULL,
-    FOREIGN KEY (Patient_id) REFERENCES Patient_information(Patient_id)
-    /*under_16 BOOLEAN,
-    aged_16_to_18_and_in_full_time_education BOOLEAN,
-    aged_60_or_over BOOLEAN,
-    maternity_exemption BOOLEAN,
-    medical_exemption BOOLEAN,
-    prepayment_certificate BOOLEAN,
-    none_charge_paid BOOLEAN,*/
-);
-INSERT INTO Prescription_charge_exemption_category (Patient_id) values (1, 'under 16', 'aged 16 to 18 and in full time education', 'aged 60 or over', 'maternity exemption', 'medical exemption', 'prepayment certificate', 'none, charge paid');
-CREATE TABLE IF NOT EXISTS Medication_controlled COMMENT 'This table stores the controlled status of the medication'
-(
-    Medication_id INT PRIMARY KEY NOT NULL UNIQUE,
-    Medication_controlled enum('yes', 'no') NOT NULL,
-    FOREIGN KEY (Medication_id) REFERENCES Medication_details(medication_name)
-    /*yes BOOLEAN,
-    no BOOLEAN,*/
-);
-INSERT INTO Medication_controlled (Medication_id) VALUES (1, 'yes', 'no'); 
 CREATE TABLE IF NOT EXISTS Staff_roles COMMENT 'This table stores the roles of the staff members'
 (
     Prescription_id INT PRIMARY KEY NOT NULL UNIQUE,
