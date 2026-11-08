@@ -95,7 +95,7 @@ SELECT p.patient_id, p.first_name, p.last_name, p.date_of_birth, p.NHS_number, p
 FROM Patient_information p
 JOIN Dispensing_information d ON p.patient_id = d.patient_id
 JOIN Medication_details m ON d.medication_id = m.medication_id
-WHERE p.known_allergies IS NOT NULL AND p.known_allergies <> 'None'; AND FIND_IN_SET(LOWER(m.medication_name), REPLACE(LOWER(p.known_allergies), ', ', ',')) > 0; COMMENT'This query checks if the user has any allergies and checks that the prescribed medication is in the list of allergies.'
+WHERE p.known_allergies IS NOT NULL AND p.known_allergies <> 'None' AND FIND_IN_SET(LOWER(m.medication_name), REPLACE(LOWER(p.known_allergies), ', ', ',')) > 0; COMMENT'This query checks if the user has any allergies and checks that the prescribed medication is in the list of allergies.'
 INSERT INTO Prescriber_information (Prescriber_id, prescriber_name, prescriber_type, practice_name, practice_address, practice_code, professional_registration_number) VALUES (
     1, 'Dr. Smith', 'GP', 'Smith Medical Practice', 'Main Branch', 12345, 'REG123456'
     2, 'Nurse Johnson', 'nurse prescriber', 'Market Branch', '456 Elm St', 67890, 'REG234567'
@@ -108,7 +108,7 @@ INSERT INTO Medication_details (medication_id, medication_name, brand_name, stre
     1, 'Amoxicillin', 'Amoxil', '500mg', 'capsule', 30, 'Take one capsule three times a day for 7 days', 0, 'no'
     2, 'Ibuprofen', 'Nurofen', '200mg', 'tablet', 20, 'Take one tablet every 6 hours as needed for pain', 0, 'no'
     3, 'Paracetamol', 'Panadol', '500mg', 'tablet', 16, 'Take one tablet every 4-6 hours as needed for pain or fever', 0, 'no'
-    4, 'Salbutamol Inhaler', 'Ventolin', NULL, 'liquid', 1, 'Inhale two puffs every 4-6 hours as needed for wheezing or shortness of breath', 0, 'no'
+    4, 'Salbutamol Inhaler', 'Ventolin', NULL, 'inhaler', 1, 'Inhale two puffs every 4-6 hours as needed for wheezing or shortness of breath', 0, 'no'
     5, 'Metformin', NULL, '500mg', 'tablet', 60, 'Take one tablet twice a day with meals for type 2 diabetes management', 0, 'no'
     6, 'Lisinopril', NULL, '10mg', 'tablet', 30, 'Take one tablet once daily for high blood pressure management', 0, 'no'
     7, 'Omeprazole', NULL, '20mg', 'capsule', 28, 'Take one capsule once daily before breakfast for acid reflux management', 0, 'no'
@@ -170,7 +170,7 @@ GRANT SELECT, INSERT, UPDATE ON Pharmacy.Dispensing_information TO pharmacist; C
 GRANT SELECT ON Pharmacy.Dispensing_information TO dispensing_assistant;
 GRANT SELECT, INSERT, DELETE, UPDATE ON Pharmacy.Dispensing_information TO branch_manager;
 GRANT SELECT, INSERT, DELETE, UPDATE ON Pharmacy.* TO head_office_administrator;
-GRANT SELECT UPDATE ON Pharmacy.Prescriber_information TO prescriber; COMMENT 'Prescribers are granted permission to view and update their own information within the prescriber_information table.'
+GRANT SELECT, UPDATE ON Pharmacy.Prescriber_information TO prescriber; COMMENT 'Prescribers are granted permission to view and update their own information within the prescriber_information table.'
 GRANT SELECT ON Pharmacy.Dispensing_information TO patient; COMMENT 'Patients are capable of viewing their own prescriptions and if they have been dispensed.'
 CREATE USER IF NOT EXISTS 'pharmacist' IDENTIFIED BY 'pharmacist_password';
 CREATE USER IF NOT EXISTS 'dispensing_assistant' IDENTIFIED BY 'dispensing_assistant_password';
