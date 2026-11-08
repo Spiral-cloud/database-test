@@ -67,9 +67,9 @@ CREATE TABLE IF NOT EXISTS Dispensing_information --This table stores all of the
 );
 CREATE TABLE IF NOT EXISTS Staff_roles --This table stores the roles of the staff members
 (
-    Prescription_id INT PRIMARY KEY NOT NULL UNIQUE,
+    Staff_id INT PRIMARY KEY NOT NULL UNIQUE,
     role enum('patient', 'pharmacist', 'dispensing_assistant', 'branch_manager', 'head_office_administrator') NOT NULL,
-    FOREIGN KEY (Prescription_id) REFERENCES Dispensing_information(Prescription_id)
+    --FOREIGN KEY (Prescription_id) REFERENCES Dispensing_information(Prescription_id)
     /*dispensing_pharmacist BOOLEAN,
     prescriber BOOLEAN,*/
 );
@@ -77,18 +77,18 @@ CREATE TABLE IF NOT EXISTS Staff_roles --This table stores the roles of the staf
 INSERT INTO Patient_information (Patient_id, first_name, last_name, date_of_birth, NHS_number, address, postcode, telephone_number, known_allergies, prescription_charge_exemption_category) VALUES 
     (1, 'John', 'Doe', '1990-01-01', '1234567890', '123 Main St', 'AB12 3CD', '01234567890', 'Penicillin', 'none, charge paid'),
     (2, 'Jane', 'Smith', '1985-05-15', '0987654321', '456 Elm St', 'EF45 6GH', '0987654321', 'None', 'medical exemption'),
-    (3, 'Alice', 'Johnson', '2000-10-20', '5678901234', '789 Oak St', 'IJ78 9KL', '5678901234', 'Aspirin, Ibuprofen', 'under 16'),
-    (4, 'Bob', 'Williams', '1975-03-30', '3456789012', '321 Pine St', 'MN12 3OP', '3446789012', 'None', 'aged 60 or over'),
+    (3, 'Alice', 'Johnson', '2000-10-20', '5678901234', '789 Oak St', 'IJ78 9KL', '5678901234', 'Aspirin, Ibuprofen', 'prepayment certificate'),
+    (4, 'Bob', 'Williams', '1965-03-30', '3456789012', '321 Pine St', 'MN12 3OP', '3446789012', 'None', 'aged 60 or over'),
     (5, 'Charlie', 'Brown', '1995-07-10', '  2345678901', '654 Cedar St', 'QR45 6ST', '2345678901', 'None', 'prepayment certificate'),
     (6, 'David', 'Jones', '1980-12-25', '4567890123', '987 Birch St', 'UV78 9WX', '4567890123', 'None', 'maternity exemption'),
-    (7, 'Eve', 'Davis', '1998-09-05', '6789012345', '135 Maple St', 'YZ12 3AB', '6789012345', 'None', 'aged 16 to 18 and in full time education'),
+    (7, 'Eve', 'Davis', '1998-09-05', '6789012345', '135 Maple St', 'YZ12 3AB', '6789012345', 'None', 'none, charge paid'),
     (8, 'Frank', 'Miller', '1970-11-15', '8901234567', '246 Spruce St', 'CD45 6EF', '8901234567', 'None', 'medical exemption'),
     (9, 'Grace', 'Wilson', '2002-02-28', '0123456789', '357 Willow St', 'GH78 9IJ', '0123456689', 'None', 'none, charge paid'),
     (10, 'Hannah', 'Moore', '1992-06-18', '2345678901', '468 Aspen St', 'KL12 3MN', '2345558901', 'None', 'prepayment certificate'),
-    (11, 'Ian', 'Taylor', '1988-04-12', '3456789012', '579 Poplar St', 'OP45 6QR', '3456789012', 'None', 'aged 60 or over'),
-    (12, 'Jack', 'Anderson', '1993-08-22', '4567890123', '680 Chestnut St', 'ST78 9UV', '4567880123', 'None', 'under 16'),
+    (11, 'Ian', 'Taylor', '1988-04-12', '3456789012', '579 Poplar St', 'OP45 6QR', '3456789012', 'None', 'none, charge paid'),
+    (12, 'Jack', 'Anderson', '1993-08-22', '4567890123', '680 Chestnut St', 'ST78 9UV', '4567880123', 'None', 'medical exemption'),
     (13, 'Kathy', 'Thomas', '1983-01-30', '5678901234', '791 Walnut St', 'WX12 3YZ', '5578901234', 'None', 'maternity exemption'),
-    (14, 'Leo', 'Jackson', '1996-05-14', '6789012345', '802 Fir St', 'YZ45 6AB', '6789002345', 'None', 'aged 16 to 18 and in full time education'),
+    (14, 'Leo', 'Jackson', '1996-05-14', '6789012345', '802 Fir St', 'YZ45 6AB', '6789002345', 'None', 'medical exemption'),
     (15, 'Mia', 'White', '1987-09-09', '7890123456', '913 Redwood St', 'AB78 9CD', '7890123456', 'None', 'medical exemption');
 /*SELECT p.patient_id, p.first_name, p.last_name, p.date_of_birth, p.NHS_number, p.address, p.postcode, p.telephone_number, p.known_allergies, p.prescription_charge_exemption_category
 FROM Patient_information p
@@ -159,7 +159,7 @@ INSERT INTO Medication_details (medication_id, medication_name, brand_name, stre
         (30, '2025-06-01', '2025-06-02', '2025-06-03', 'Main Branch', 'dispensed', 'paid', 0, 1, 1, 6, 0);
     
     -- Creates 30 prescriptions with different information which helps to test that the database is capable of taking regular input, three branches are also created here which are used throughout the database.
-INSERT INTO Staff_roles (Prescription_id, role) VALUES (1, 'patient'), (2, 'pharmacist'), (3, 'dispensing_assistant'), (4, 'branch_manager'), (5, 'head_office_administrator'); --Inserts the roles into the Staff_roles table.
+INSERT INTO Staff_roles (Staff_id, role) VALUES (1, 'patient'), (2, 'pharmacist'), (3, 'dispensing_assistant'), (4, 'branch_manager'), (5, 'head_office_administrator'); --Inserts the roles into the Staff_roles table.
 /*CREATE RULE IF NOT EXISTS Unique_identifier AS ON INSERT TO Prescription_status
     WHERE EXISTS (SELECT 1 FROM Prescription_status WHERE Prescription_id = NEW.Prescription_id)
     DO INSTEAD NOTHING;*/
