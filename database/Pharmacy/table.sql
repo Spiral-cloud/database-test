@@ -167,7 +167,7 @@ GRANT SELECT, INSERT, UPDATE ON Pharmacy.Dispensing_information TO pharmacist; -
 GRANT SELECT ON Pharmacy.Dispensing_information TO dispensing_assistant;
 GRANT SELECT, INSERT, DELETE, UPDATE ON Pharmacy.Dispensing_information TO branch_manager;
 GRANT SELECT, INSERT, DELETE, UPDATE ON Pharmacy.* TO head_office_administrator;
-GRANT SELECT, UPDATE ON Pharmacy.Prescriber_information TO prescriber; --Prescribers are granted permission to view and update their own information within the prescriber_information table.
+GRANT SELECT, UPDATE ON Pharmacy.Dispensing_information TO prescriber; --Prescribers are granted permission to view and update their own information within the prescriber_information table.
 GRANT SELECT ON Pharmacy.Dispensing_information TO patient; --Patients are capable of viewing their own prescriptions and if they have been dispensed.
 CREATE USER IF NOT EXISTS 'pharmacist'@'localhost' IDENTIFIED BY 'pharmacist_password';
 CREATE USER IF NOT EXISTS 'dispensing_assistant'@'localhost' IDENTIFIED BY 'dispensing_assistant_password';
