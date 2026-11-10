@@ -87,7 +87,7 @@ INSERT INTO Patient_information (Patient_id, first_name, last_name, date_of_birt
     (10, 'Hannah', 'Moore', '1992-06-18', '2345678901', '468 Aspen St', 'KL12 3MN', '2345558901', 'None', 'prepayment certificate'),
     (11, 'Ian', 'Taylor', '1988-04-12', '4456789012', '579 Poplar St', 'OP45 6QR', '3456789012', 'None', 'none, charge paid'),
     (12, 'Jack', 'Anderson', '1993-08-22', '4567790123', '680 Chestnut St', 'ST78 9UV', '4567880123', 'None', 'medical exemption'),
-    (13, 'Kathy', 'Thomas', '1983-01-30', '5678901234', '791 Walnut St', 'WX12 3YZ', '5578901234', 'None', 'maternity exemption'),
+    (13, 'Kathy', 'Thomas', '1983-01-30', '5677901234', '791 Walnut St', 'WX12 3YZ', '5578901234', 'None', 'maternity exemption'),
     (14, 'Leo', 'Jackson', '1996-05-14', '6799012345', '802 Fir St', 'YZ45 6AB', '6789002345', 'None', 'medical exemption'),
     (15, 'Mia', 'White', '1987-09-09', '7890123456', '913 Redwood St', 'AB78 9CD', '7890123456', 'None', 'medical exemption');
 /*SELECT p.patient_id, p.first_name, p.last_name, p.date_of_birth, p.NHS_number, p.address, p.postcode, p.telephone_number, p.known_allergies, p.prescription_charge_exemption_category
